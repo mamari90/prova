@@ -22,7 +22,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
           # Days configuration - use PR-specific parameters
-          days-before-pr-stale: 30
+          days-before-pr-stale: 0
           days-before-pr-close: 0
 
           # Labels
@@ -49,10 +49,13 @@ jobs:
 
       - name: Log PR cleaner report
         if: ${{ steps.stale_action.outputs.staled-issues-prs != '[]' || steps.stale_action.outputs.closed-issues-prs != '[]' }}
+        env:
+          STALED: ${{steps.stale_action.outputs.staled-issues-prs}}
+          CLOSED: ${{steps.stale_action.outputs.closed-issues-prs}}
         run: |
           echo "PR cleaner report:"
-          echo "- New PR staled: ${{steps.stale_action.outputs.staled-issues-prs}}"
-          echo "- New PR closed: ${{steps.stale_action.outputs.closed-issues-prs}}"
+          echo "- New PR staled: $STALED"
+          echo "- New PR closed: $CLOSED"
 
       - name: Notify PR updates
         uses: slackapi/slack-github-action@af78098f536edbc4de71162a307590698245be95 #v3.0.1
